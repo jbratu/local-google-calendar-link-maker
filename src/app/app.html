@@ -1,0 +1,127 @@
+<main class="container">
+  <h1>Google Calendar Link Maker</h1>
+
+  <div class="form-section">
+    <label for="calendar-url">
+      Google Calendar URL
+      <span class="hint">(e.g., https://calendar.google.com/calendar/embed?src=youremail@example.com)</span>
+    </label>
+    <input
+      id="calendar-url"
+      type="url"
+      [value]="calendarUrl()"
+      (input)="updateCalendarUrl($event)"
+      placeholder="Enter your Google Calendar embed URL"
+      class="url-input"
+    >
+  </div>
+
+  <div class="form-section">
+    <label for="timezone">Timezone</label>
+    @if (recentTimezones().length > 0) {
+      <div class="recent-timezones">
+        <span class="recent-label">Recent:</span>
+        @for (tzId of recentTimezones(); track tzId) {
+          <button
+            class="recent-tz-btn"
+            (click)="selectRecentTimezone(tzId)"
+            type="button"
+          >
+            {{ getTimezoneName(tzId) }}
+          </button>
+        }
+      </div>
+    }
+    <div class="timezone-container">
+      <input
+        id="timezone"
+        type="text"
+        [value]="timezoneSearch()"
+        (input)="updateTimezoneSearch($event)"
+        (focus)="onTimezoneFocus($event)"
+        (blur)="onTimezoneBlur()"
+        placeholder="Type to search timezones..."
+        class="timezone-input"
+        autocomplete="off"
+      >
+      @if (showDropdown() && filteredTimezones().length > 0) {
+        <div class="timezone-dropdown">
+          @for (tz of filteredTimezones(); track tz.identifier) {
+            <div
+              class="timezone-option"
+              (click)="selectTimezone(tz)"
+              [class.selected]="tz.identifier === selectedTimezone()"
+            >
+              {{ tz.name }}
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="form-section">
+    <label>Select Week</label>
+    <div class="week-buttons">
+      <button
+        (click)="selectWeek('this')"
+        [class.active]="selectedWeek() === 'this'"
+        class="week-btn"
+      >
+        This Week
+      </button>
+      <button
+        (click)="selectWeek('next')"
+        [class.active]="selectedWeek() === 'next'"
+        class="week-btn"
+      >
+        Next Week
+      </button>
+      <button
+        (click)="selectWeek('custom')"
+        [class.active]="selectedWeek() === 'custom'"
+        class="week-btn"
+      >
+        Select Date
+      </button>
+    </div>
+    @if (selectedWeek() === 'custom') {
+      <div class="date-picker-container">
+        <label for="custom-date" class="date-label">Choose a date (will select that week):</label>
+        <input
+          id="custom-date"
+          type="date"
+          [value]="customDate()"
+          [min]="getMinDate()"
+          [max]="getMaxDate()"
+          (input)="updateCustomDate($event)"
+          class="date-input"
+        >
+      </div>
+    }
+  </div>
+
+  @if (generatedLink()) {
+    <div class="result-section">
+      <label>Generated Link</label>
+      <div class="link-display">
+        <input
+          type="text"
+          [value]="generatedLink()"
+          readonly
+          class="generated-link"
+        >
+      </div>
+      <div class="action-buttons">
+        <button (click)="copyToClipboard()" class="action-btn">
+          Copy to Clipboard
+        </button>
+        <button (click)="openInNewTab()" class="action-btn">
+          Open in New Tab
+        </button>
+      </div>
+    </div>
+  }
+</main>
+
+<router-outlet />

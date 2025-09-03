@@ -1,0 +1,12 @@
+runtime: nodejs22
+
+env_variables:
+  NODE_ENV: production
+
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+
+handlers:
+- url: /.*
+  script: auto

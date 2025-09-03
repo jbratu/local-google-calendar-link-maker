@@ -1,0 +1,48 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log
+.npm/
+
+# Development files
+src/
+*.ts
+*.spec.js
+*.spec.ts
+angular.json
+tsconfig*.json
+.editorconfig
+.vscode/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Testing
+coverage/
+e2e/
+karma.conf.js
+jest.config.js
+
+# Build artifacts (keep dist/ for SSR)
+.angular/
+
+# Source control
+.git/
+.gitignore
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation
+README.md
+docs/
