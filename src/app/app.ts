@@ -27,6 +27,10 @@ export class App implements OnInit {
   generatedLink = computed(() => this.generateLink());
   recentTimezones = signal<string[]>([]);
   
+  // PWA install prompt
+  showInstallPrompt = signal(false);
+  private deferredPrompt: any;
+  
   filteredTimezones = computed(() => {
     const search = this.timezoneSearch().toLowerCase();
     // Show all timezones if search matches the current selection or is empty
@@ -121,6 +125,18 @@ export class App implements OnInit {
       // Set default custom date to today
       const today = new Date();
       this.customDate.set(this.formatDateForInput(today));
+      
+      // Listen for PWA install prompt
+      window.addEventListener('beforeinstallprompt', (e: Event) => {
+        e.preventDefault();
+        this.deferredPrompt = e;
+        this.showInstallPrompt.set(true);
+      });
+      
+      // Check if app is already installed (PWA)
+      if ((window as any).matchMedia('(display-mode: standalone)').matches) {
+        this.showInstallPrompt.set(false);
+      }
     }
   }
   
@@ -268,5 +284,28 @@ export class App implements OnInit {
     if (!link) return;
     
     window.open(link, '_blank');
+  }
+  
+  async installPWA() {
+    if (!this.deferredPrompt) return;
+    
+    this.deferredPrompt.prompt();
+    const { outcome } = await this.deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      console.log('PWA installed');
+    }
+    
+    this.deferredPrompt = null;
+    this.showInstallPrompt.set(false);
+  }
+  
+  dismissInstallPrompt() {
+    this.showInstallPrompt.set(false);
+    // Store dismissal in localStorage to not show again for some time
+    if (this.isBrowser) {
+      const dismissTime = new Date().getTime();
+      localStorage.setItem('pwaInstallDismissed', dismissTime.toString());
+    }
   }
 }

@@ -1,6 +1,18 @@
 <main class="container">
   <h1>Google Calendar Link Maker</h1>
 
+  @if (showInstallPrompt()) {
+    <div class="install-prompt">
+      <div class="install-content">
+        <span class="install-text">Install this app for quick access!</span>
+        <div class="install-buttons">
+          <button (click)="installPWA()" class="install-btn">Install</button>
+          <button (click)="dismissInstallPrompt()" class="dismiss-btn">Not now</button>
+        </div>
+      </div>
+    </div>
+  }
+
   <div class="form-section">
     <label for="calendar-url">
       Google Calendar URL
